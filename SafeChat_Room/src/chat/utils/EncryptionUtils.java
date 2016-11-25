@@ -100,6 +100,17 @@ public class EncryptionUtils {
 	 * @param message 发送的消息
 	 */
 	public static void encryptMessage(String filePublicKeyName,Message message){
+		/*
+		 * 客户端加密消息数据的步骤:
+		 * 1.DES加密发送的消息内容.
+		 * 		1.1 生成KEY,生成唯一的UUID作为KEY
+		 * 		1.2用这个KEY来进行DES加密发送的内容
+		 * 		1.3设置加密内容
+		 * 2.加密发送能够解密DES的key.
+		 * 		2.1对KEY用服务器派发的公钥进行RSA加密(只有服务器的私钥可以解密)
+		 *		2.2设置key
+		 */		
+				
 		//1.生成唯一的UUID
 		String key = UUID.randomUUID().toString();
 		//2.用这个UUID作为key来加密发送消息
@@ -125,6 +136,10 @@ public class EncryptionUtils {
 		}
 		
 	}
+	
+	
+	
+	
 	
 	
 }

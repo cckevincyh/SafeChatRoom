@@ -182,7 +182,6 @@ public class ClienManage {
 				//发送消息之前需要加密
 				EncryptionUtils.encryptMessage("publicKey.key", mess);
 				/************加密****************/
-				System.out.println(mess.getKey());
 				os = new ObjectOutputStream(s.getOutputStream());
 				os.writeObject(mess);
 			} catch (IOException e) {

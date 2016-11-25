@@ -12,6 +12,7 @@ import java.net.SocketException;
 import chat.common.Message;
 import chat.common.MessageType;
 import chat.utils.DecryptionUtils;
+import chat.utils.EncryptionUtils;
 import chat.utils.IOUtils;
 import chat.utils.RSAUtils;
 import chat_server.server.tools.ServerThreadCollection;
@@ -55,12 +56,14 @@ public class ServerConClient implements Runnable{
 					break;
 				}
 				Message mess = (Message)ois.readObject();//获得消息
+				Message message = new Message(mess);	//需要解密解密的消息
 				/*********************对消息进行解密处理**********************/
-				DecryptionUtils.decryptMessage("privateKey.key", mess);
+				DecryptionUtils.decryptMessage("privateKey.key", message);
 		
 				/*********************对消息进行解密处理**********************/
+				//服务器显示消息
+				Server_Frame.showMessage(message);
 				//判断信息的类型，并进行转发处理
-				Server_Frame.showMessage(mess);
 				//如果是发给全部人的信息
 				if(mess.getMessageType().equals(MessageType.Common_Message_ToAll)){
 					//获得在线用户
@@ -72,6 +75,9 @@ public class ServerConClient implements Runnable{
 						if(!mess.getSender().equals(Name)){
 							//设置接收用户
 							mess.setGetter(Name);
+							/*************************加密转发的信息***************************/
+							EncryptionUtils.encryptMessage("privateKey.key", mess);		
+							/*************************加密转发的信息****************************/
 							//获得其他服务器端与客户端通信的线程
 							ServerConClient sccc = ServerThreadCollection.getServerContinueConnetClient(Name);
 							os = new ObjectOutputStream(sccc.s.getOutputStream());
@@ -79,6 +85,9 @@ public class ServerConClient implements Runnable{
 						}
 					}
 				}else if(mess.getMessageType().equals(MessageType.Common_Message_ToPerson)){
+					/*************************加密转发的信息***************************/
+					EncryptionUtils.encryptMessage("privateKey.key", mess);		
+					/*************************加密转发的信息****************************/
 					//根据获得者取得服务器端与客户端通信的线程
 					ServerConClient sccc = ServerThreadCollection.getServerContinueConnetClient(mess.getGetter());
 					os = new ObjectOutputStream(sccc.s.getOutputStream());

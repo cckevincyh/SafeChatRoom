@@ -32,6 +32,14 @@ public class DecryptionUtils {
 	 * @param message 接受的消息
 	 */
 	public static void decryptMessage(String filePrivateKeyName,Message message){
+		/*
+		 * 服务器端解密客户端发送过来的消息步骤:
+		 * 	1.获取发送过来消息里的KEY
+		 * 		1.1. 用服务器的私钥对KEY进行RSA解密,得到DES解密的KEY
+		 * 	2.获取加密的内容(使用的DES加密)
+		 * 		2.2. 用解密后的KEY对发送过来的消息内容进行DES解密得到最后的明文消息
+		 * 
+		 */
 		//1.用私钥解密message中的key
 		byte[] key = decryptByPrivateKey(filePrivateKeyName, message.getKey());
 		try {
