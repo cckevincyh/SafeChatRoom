@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import chat.common.Message;
 import chat.common.MessageType;
 import chat.common.User;
+import chat.utils.DecryptionUtils;
 import chat.utils.EncryptionUtils;
 
 
@@ -151,7 +152,7 @@ public class ClienManage {
 		if(s!=null){
 			try {
 				ois = new ObjectInputStream(s.getInputStream());
-				 mess = (Message)ois.readObject();		
+				 mess = (Message)ois.readObject();	
 			}catch(SocketException e){
 				isConnect = false;
 				e.printStackTrace();

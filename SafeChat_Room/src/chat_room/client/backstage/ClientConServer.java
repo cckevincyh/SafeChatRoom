@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import chat.common.Message;
 import chat.common.MessageType;
+import chat.utils.DecryptionUtils;
 import chat_room.client.tools.ManageClientCollction;
 import chat_room.client.tools.ManageClientPersonCollection;
 import chat_room.client.view.ClientFrame;
@@ -38,6 +39,9 @@ public class ClientConServer implements Runnable{
 				//根据不同的信息类型处理信息
 				if(mess!=null){
 					if(mess.getMessageType().equals(MessageType.Common_Message_ToAll)){
+						/******************解密服务器转发过来的消息********************/
+						DecryptionUtils.decryptMessage(mess);
+						/******************解密服务器转发过来的消息********************/
 						//根据获得者获得群聊窗口
 						Client_Frame Client = ManageClientCollction.GetClient_Frame(mess.getGetter());
 						//将信息显示在群聊窗口
@@ -57,6 +61,9 @@ public class ClientConServer implements Runnable{
 						//将信息显示在群聊窗口
 						ClientFrame.ShowSystemMessage(mess);
 					}else if(mess.getMessageType().equals(MessageType.Common_Message_ToPerson)){
+						/******************解密服务器转发过来的消息********************/
+						DecryptionUtils.decryptMessage(mess);
+						/******************解密服务器转发过来的消息********************/
 						//如果提示发送给个人
 						//根据字符串找到指定的个人聊天界面
 						String str = mess.getGetter()+" "+mess.getSender();
