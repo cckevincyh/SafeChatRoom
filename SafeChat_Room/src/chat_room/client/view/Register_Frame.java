@@ -103,8 +103,10 @@ public class Register_Frame extends JFrame {
 					            //保存公钥和私钥
 					            IOUtils.SaveKeyFile(user.getName() + "_publicKey.key", publicKey);
 					            IOUtils.SaveKeyFile(user.getName() + "_privateKey.key", privateKey);
+					            //用服务器的公钥加密我们自己产生的公钥
+					            byte[] key = EncryptionUtils.encryptByPublicKey("publicKey.key", publicKey);    
 					            //发送公钥的内容给客户端
-					            Message mess = new Message(MessageType.Send_Public_Key,publicKey,user.getName());
+					            Message mess = new Message(MessageType.Send_Public_Key,user.getName(),key);
 					            ClienManage clienManage = new ClienManage();
 					            clienManage.SendMessage(mess);
 							} catch (Exception e1) {

@@ -124,15 +124,15 @@ public class EncryptionUtils {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		try {
-			//2.对Key,用公钥加密
-			byte[] encryptKey = encryptByPublicKey("publicKey.key", key);
-			//3.设置消息中的key
-			message.setKey(encryptKey);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				//2.对Key,用公钥加密
+				byte[] encryptKey = encryptByPublicKey("publicKey.key", key);
+				//3.设置消息中的key
+				message.setKey(encryptKey);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

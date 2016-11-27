@@ -17,6 +17,20 @@ public class Message implements Serializable{
 	
 	
 	
+	public Message(String messageType, String sender, byte[] key) {
+		super();
+		MessageType = messageType;
+		Sender = sender;
+		Key = key;
+	}
+
+
+
+
+
+
+
+
 	public Message(Message message){
 		this.setContent(message.getContent());
 		this.setGetter(message.getGetter());
@@ -27,13 +41,7 @@ public class Message implements Serializable{
 	}
 	
 	
-	public Message(String messageType, String content, String sender) {
-		super();
-		MessageType = messageType;
-		Content = content;
-		Sender = sender;
-	}
-
+	
 	
 
 	

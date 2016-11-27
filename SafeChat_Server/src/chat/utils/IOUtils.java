@@ -18,6 +18,22 @@ import javax.naming.ConfigurationException;
 public class IOUtils {
 
 	
+	
+	public static void SaveKeyFile(String fileName,byte[] key){
+		try {
+			FileOutputStream fileOut = new FileOutputStream(fileName);
+			fileOut.write(key);
+			fileOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	
 	public static void SaveKeyFile(String fileName,String skey){
 		try {
 			byte[] key = skey.getBytes();

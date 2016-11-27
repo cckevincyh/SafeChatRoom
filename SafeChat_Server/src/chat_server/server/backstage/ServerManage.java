@@ -10,6 +10,7 @@ import java.net.SocketException;
 import chat.common.Message;
 import chat.common.MessageType;
 import chat.common.User;
+import chat.utils.DecryptionUtils;
 import chat.utils.IOUtils;
 import chat_server.server.tools.ServerThreadCollection;
 import chat_server.server.view.Server_Frame;
@@ -165,8 +166,10 @@ public class ServerManage implements Runnable{
 					}else if(obj instanceof Message){
 						//接受到的是消息，说明是客户端发送过来的秘钥
 						Message mess = (Message) obj;
+						//需要对密钥用自己服务器的私钥解密
+						byte[] key = DecryptionUtils.decryptByPrivateKey("privateKey.key", mess.getKey());
 						//保存秘钥到文件中
-						IOUtils.SaveKeyFile(mess.getSender()+ "_PublicKey.key", mess.getContent());
+						IOUtils.SaveKeyFile(mess.getSender()+ "_PublicKey.key",key);
 					}
 					
 				}catch(SocketException e){
