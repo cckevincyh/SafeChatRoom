@@ -58,8 +58,9 @@ public class ServerConClient implements Runnable{
 				Message mess = (Message)ois.readObject();//获得消息
 				Message message = new Message(mess);	//需要解密解密的消息
 				/*********************对消息进行解密处理**********************/
-				DecryptionUtils.decryptMessage("privateKey.key", message);
-		
+				if(mess.getMessageType().equals(MessageType.Common_Message_ToAll)||mess.getMessageType().equals(MessageType.Common_Message_ToPerson)){
+				//	DecryptionUtils.decryptMessage("privateKey.key", message);
+				}
 				/*********************对消息进行解密处理**********************/
 				//服务器显示消息
 				Server_Frame.showMessage(message);
@@ -95,7 +96,7 @@ public class ServerConClient implements Runnable{
 				}else if(mess.getMessageType().equals(MessageType.Send_FileToAll)){
 					ServerManage.Send_SystemMessage("系统消息："+mess.getSender()+"给所有人发送了文件名为："+mess.getContent()+"的文件\r\n");
 					Server_Frame.ShowSystemMessage("系统消息："+mess.getSender()+"给所有人发送了文件名为："+mess.getContent()+"的文件\r\n");
-					//如果是发送文件给所有人
+					//如果是发送文件给所有人z
 					SendFileThread r = new SendFileThread(mess,0);
 					Thread t = new Thread(r);
 					t.start();

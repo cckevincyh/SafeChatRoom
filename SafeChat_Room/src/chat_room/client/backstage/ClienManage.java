@@ -19,11 +19,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 import chat.common.Message;
 import chat.common.MessageType;
 import chat.common.User;
 import chat.utils.DecryptionUtils;
+import chat.utils.DesUtil;
 import chat.utils.EncryptionUtils;
 
 

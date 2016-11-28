@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 import chat.common.Message;
 import chat.common.MessageType;
+import chat.utils.EncryptionUtils;
 import chat_room.client.backstage.ClienManage;
 import chat_room.client.backstage.ClientConServer;
 import chat_room.client.tools.ManageClientPersonCollection;

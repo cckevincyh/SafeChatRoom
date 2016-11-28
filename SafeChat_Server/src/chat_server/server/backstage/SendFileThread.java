@@ -17,6 +17,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import chat.common.Message;
+import chat.utils.DesUtil;
 import chat_server.server.tools.ServerThreadCollection;
 /**
  * 服务器接收文件的线程类

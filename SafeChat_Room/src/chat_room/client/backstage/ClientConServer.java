@@ -1,5 +1,6 @@
 package chat_room.client.backstage;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Set;
 
@@ -40,7 +41,12 @@ public class ClientConServer implements Runnable{
 				if(mess!=null){
 					if(mess.getMessageType().equals(MessageType.Common_Message_ToAll)){
 						/******************解密服务器转发过来的消息********************/
-						DecryptionUtils.decryptMessage(mess);
+						try {
+							DecryptionUtils.decryptMessage(mess);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						/******************解密服务器转发过来的消息********************/
 						//根据获得者获得群聊窗口
 						Client_Frame Client = ManageClientCollction.GetClient_Frame(mess.getGetter());
@@ -62,7 +68,12 @@ public class ClientConServer implements Runnable{
 						ClientFrame.ShowSystemMessage(mess);
 					}else if(mess.getMessageType().equals(MessageType.Common_Message_ToPerson)){
 						/******************解密服务器转发过来的消息********************/
-						DecryptionUtils.decryptMessage(mess);
+						try {
+							DecryptionUtils.decryptMessage(mess);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						/******************解密服务器转发过来的消息********************/
 						//如果提示发送给个人
 						//根据字符串找到指定的个人聊天界面

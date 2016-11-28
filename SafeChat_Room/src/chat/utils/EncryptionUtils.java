@@ -102,11 +102,11 @@ public class EncryptionUtils {
 	public static void encryptMessage(String filePublicKeyName,Message message){
 		/*
 		 * 客户端加密消息数据的步骤:
-		 * 1.DES加密发送的消息内容.
+		 * 1.AES加密发送的消息内容.
 		 * 		1.1 生成KEY,生成唯一的UUID作为KEY
-		 * 		1.2用这个KEY来进行DES加密发送的内容
+		 * 		1.2用这个KEY来进行AES加密发送的内容
 		 * 		1.3设置加密内容
-		 * 2.加密发送能够解密DES的key.
+		 * 2.加密发送能够解密AES的key.
 		 * 		2.1对KEY用服务器派发的公钥进行RSA加密(只有服务器的私钥可以解密)
 		 *		2.2设置key
 		 */		
@@ -119,7 +119,7 @@ public class EncryptionUtils {
 		if(message.getMessageType().equals(MessageType.Common_Message_ToPerson)||message.getMessageType().equals(MessageType.Common_Message_ToAll)){
 			try {
 				//设置DES加密后的消息
-				message.setContent(new String(DesUtil.encrypt(message.getContent(), key)));
+				message.setContent(AESUtils.parseByte2HexStr(AESUtils.encrypt(message.getContent(), key)));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -137,6 +137,49 @@ public class EncryptionUtils {
 		
 	}
 	
+	
+	
+	/**
+	 * 客户端加密发送文件消息的KEY
+	 * @param message
+	 */
+	public static void encryptFileKey(Message message){
+		//1.生成唯一的UUID
+		String key = UUID.randomUUID().toString();
+		//2.用这个UUID作为key来加密发送消息
+		//对Key,用公钥加密
+		byte[] encryptByPublicKey = encryptByPublicKey("publicKey.key", key);
+		//设置消息中的key
+		message.setKey(encryptByPublicKey);
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 对发送的公钥进行加盐md5加密再形成数字签名
+	 * @param myPublicKey 客户端生成的公钥
+	 * @param myPrivateKey 客户端生成的私钥 
+	 * @return
+	 */
+	public static byte[] encryptKeySign(String myPublicKey,String myPrivateKey){
+		/*
+		 * 对发送的公钥进行加盐md5加密再形成数字签名的步骤
+		 * 	1. 对公钥进行加盐,然后在进行md5加密
+		 * 	2. 对md5加密后的数据用自己的私钥进行RSA加密形成数字签名
+		 */
+		//1. 对公钥进行加盐,然后在进行md5加密
+		//加盐
+		String publicKey = "CaiRou@and#Wren!" + myPublicKey;
+		//md5加密
+		String md5Key = Md5Utils.md5(publicKey);
+		//2. 对md5加密后的数据用自己的私钥进行RSA加密形成数字签名
+		byte[] key = EncryptionUtils.encryptByPrivateKey(myPrivateKey, md5Key);
+		return key;
+	}
 	
 	
 	
