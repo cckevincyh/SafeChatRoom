@@ -21,9 +21,13 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.UUID;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+
 import chat.common.Message;
 import chat.common.MessageType;
 import chat.common.User;
+import chat.utils.AESUtils;
 import chat.utils.DecryptionUtils;
 import chat.utils.DesUtil;
 import chat.utils.EncryptionUtils;
@@ -234,11 +238,16 @@ public class ClienManage {
 		try {
 			bos = new BufferedOutputStream(s1.getOutputStream());
 			
-			bis = new BufferedInputStream(new FileInputStream(path));
-
+		//	bis = new BufferedInputStream(new FileInputStream(path));
+			Cipher cipher = AESUtils.initAESCipher("12345678",Cipher.ENCRYPT_MODE);   
+            CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(path), cipher);  
 			byte[] bys = new byte[1024];
 			int len = 0;
-			while ((len = bis.read(bys)) != -1) {
+			while ((len = cipherInputStream.read(bys)) != -1) {
+				/************AES加密文件数据*******************/
+				//byte[] byss = AESUtils.encrypt(AESUtils.parseByte2HexStr(bys), "12345678");
+				/************AES加密文件数据*******************/
+				bys = AESUtils.parseHexStr2Byte(AESUtils.parseByte2HexStr(bys));
 				bos.write(bys, 0, len);
 				bos.flush();
 			}

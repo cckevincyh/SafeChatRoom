@@ -16,7 +16,12 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+
 import chat.common.Message;
+import chat.utils.AESUtils;
 import chat.utils.DesUtil;
 import chat_server.server.tools.ServerThreadCollection;
 /**
@@ -34,6 +39,9 @@ public class SendFileThread implements Runnable{
 	
 	private BufferedInputStream bis;
 	private BufferedOutputStream bos;
+	
+	 CipherOutputStream cipherOutputStream;
+	 CipherInputStream cipherInputStream;
 	public SendFileThread(Message mess,int Type){
 		this.mess = mess;
 		this.Type = Type;
@@ -58,18 +66,32 @@ public class SendFileThread implements Runnable{
 		try {
 			//封装输入流
 			try {
-				bis = new BufferedInputStream((s.getInputStream()));
+				//bis = new BufferedInputStream((s.getInputStream()));
+				Cipher cipher = AESUtils.initAESCipher("12345678",Cipher.DECRYPT_MODE);  
+	            //以加密流写入文件  
+	             cipherInputStream = new CipherInputStream(s.getInputStream(), cipher);  
 				Name = System.currentTimeMillis();
 				bos = new BufferedOutputStream(new FileOutputStream(Name+""+mess.getContent()));
+				 //Cipher cipher = AESUtils.initAESCipher("12345678",Cipher.DECRYPT_MODE);  
+				  //cipherOutputStream = new CipherOutputStream(new FileOutputStream(Name+""+mess.getContent()), cipher);  
+				
+				
 			} catch (IOException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			byte[] bys = new byte[1024];
 			int len = 0;
-			while ((len = bis.read(bys)) != -1) {
+			while ((len = cipherInputStream.read(bys)) != -1) {
+				System.out.println(len);
+				System.out.println(new String(bys));
+				System.out.println(bys.length);
+				/*******************AES解密文件数据********************/
+				//byte[] decrypt = AESUtils.decrypt(bys, "12345678");
+				/*******************AES解密文件数据********************/
 				bos.write(bys, 0, len);
 				bos.flush();
+				System.out.println("123");
 			}
 			if(Type==0){
 				//发送给所有人
