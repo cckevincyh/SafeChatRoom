@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 
 import chat.common.Message;
 import chat.common.MessageType;
+import chat.utils.EncryptionUtils;
 import chat_room.client.backstage.ClienManage;
 import chat_room.client.tools.ManageClientPersonCollection;
 import chat_room.client.tools.Tools;
@@ -107,11 +108,14 @@ public class ClientFrame extends JFrame implements WindowListener{
 				
 				if( jfc.getSelectedFile().toPath().toString()!=null){
 					//发送消息类型
+					/***************设置AES加密的KEY****************/
+					String key = EncryptionUtils.encryptFileKey(mess);
+					/***************设置AES加密的KEY****************/
 					cm.SendMessage(mess);
 					//获得路径
 					String path = jfc.getSelectedFile().toPath().toString();
 					//发送文件
-					cm.SendFile(path);
+					cm.SendFile(path,key);
 					Message m = new Message();
 					m.setMessageType(MessageType.Common_Message_ToPerson);
 					m.setSender(Sender);

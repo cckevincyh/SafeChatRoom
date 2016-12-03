@@ -222,8 +222,9 @@ public class ClienManage {
 	/**
 	 * 发送文件的方法
 	 * @param path 路径 
+	 * @param key AES加密需要的key
 	 */
-	public void SendFile(String path){
+	public void SendFile(String path,String key){
 		Socket s1 = null;
 		try {
 			//新创建一个TCP协议
@@ -239,14 +240,14 @@ public class ClienManage {
 			bos = new BufferedOutputStream(s1.getOutputStream());
 			
 		//	bis = new BufferedInputStream(new FileInputStream(path));
-			Cipher cipher = AESUtils.initAESCipher("12345678",Cipher.ENCRYPT_MODE);   
+			/************AES加密文件数据*******************/
+			Cipher cipher = AESUtils.initAESCipher(key,Cipher.ENCRYPT_MODE);   
             CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(path), cipher);  
-			byte[] bys = new byte[1024];
+        	/************AES加密文件数据*******************/
+            byte[] bys = new byte[1024];
 			int len = 0;
 			while ((len = cipherInputStream.read(bys)) != -1) {
-				/************AES加密文件数据*******************/
-				//byte[] byss = AESUtils.encrypt(AESUtils.parseByte2HexStr(bys), "12345678");
-				/************AES加密文件数据*******************/
+				
 				bys = AESUtils.parseHexStr2Byte(AESUtils.parseByte2HexStr(bys));
 				bos.write(bys, 0, len);
 				bos.flush();

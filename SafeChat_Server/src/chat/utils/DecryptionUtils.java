@@ -1,6 +1,7 @@
 package chat.utils;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import chat.common.Message;
 
@@ -52,6 +53,21 @@ public class DecryptionUtils {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 服务器解密发送文件消息的KEY
+	 * @param message 对message设置加密后的KEY
+	 * @return 返回KEY
+	 */
+	public static void decryptFileKey(Message message){
+		//对Key,用私钥解密
+		byte[] encryptByPublicKey = decryptByPrivateKey("privateKey.key", message.getKey());
+		//设置消息中的key
+		message.setKey(encryptByPublicKey);
+	}
+	
+	
+	
 	
 	/**
 	 * 验证加密后的数字签名

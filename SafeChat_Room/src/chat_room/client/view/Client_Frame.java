@@ -154,10 +154,13 @@ public class Client_Frame extends JFrame {
 				//选择了才能发送
 				if(jfc.getSelectedFile().toPath().toString()!=null){
 					//发送消息类型
+					/***************设置AES加密的KEY****************/
+					String key = EncryptionUtils.encryptFileKey(mess);
+					/***************设置AES加密的KEY****************/
 					cm.SendMessage(mess);
 					String path = jfc.getSelectedFile().toPath().toString();
 					//发送文件
-					cm.SendFile(path);
+					cm.SendFile(path,key);
 				}
 			}
 		});

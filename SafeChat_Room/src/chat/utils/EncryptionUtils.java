@@ -141,9 +141,10 @@ public class EncryptionUtils {
 	
 	/**
 	 * 客户端加密发送文件消息的KEY
-	 * @param message
+	 * @param message 对message设置加密后的KEY
+	 * @return 返回KEY
 	 */
-	public static void encryptFileKey(Message message){
+	public static String encryptFileKey(Message message){
 		//1.生成唯一的UUID
 		String key = UUID.randomUUID().toString();
 		//2.用这个UUID作为key来加密发送消息
@@ -151,6 +152,7 @@ public class EncryptionUtils {
 		byte[] encryptByPublicKey = encryptByPublicKey("publicKey.key", key);
 		//设置消息中的key
 		message.setKey(encryptByPublicKey);
+		return key;
 	}
 	
 	
