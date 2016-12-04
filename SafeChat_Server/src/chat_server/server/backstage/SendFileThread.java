@@ -24,6 +24,7 @@ import chat.common.Message;
 import chat.utils.AESUtils;
 import chat.utils.DecryptionUtils;
 import chat.utils.DesUtil;
+import chat.utils.EncryptionUtils;
 import chat_server.server.tools.ServerThreadCollection;
 /**
  * 服务器接收文件的线程类
@@ -92,10 +93,10 @@ public class SendFileThread implements Runnable{
 			}
 			if(Type==0){
 				//发送给所有人
-				SendFileToAll(Name+""+mess.getContent());
+				SendFileToAll(Name+""+mess.getContent(),new String(mess.getKey()));
 			}else if(Type==1){
 				//发送给个人
-				SendFileToPerson(Name+""+mess.getContent());
+				SendFileToPerson(Name+""+mess.getContent(),new String(mess.getKey()));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -123,12 +124,20 @@ public class SendFileThread implements Runnable{
 	/**
 	 * 发送给个人
 	 */
-	public void SendFileToPerson(String FileName){
+	public void SendFileToPerson(String FileName,String key){
 		Socket s1 = null;;
 		try {
 			//根据获得者取得服务器端与客户端通信的线程
 			ServerConClient sccc = ServerThreadCollection.getServerContinueConnetClient(mess.getGetter());
-			 bis = new BufferedInputStream(new FileInputStream(FileName));
+			/******************RSA加密AES的KEY********************************/
+			byte[] encryptByPublicKey = EncryptionUtils.encryptByPublicKey(mess.getGetter()+"_publicKey.key", key);
+			mess.setKey(encryptByPublicKey);
+			/*********************RSA加密AES的KEY*****************************/
+			// bis = new BufferedInputStream(new FileInputStream(FileName));
+			/************AES加密文件数据*******************/
+			Cipher cipher = AESUtils.initAESCipher(key,Cipher.ENCRYPT_MODE);   
+            cipherInputStream = new CipherInputStream(new FileInputStream(FileName), cipher);  
+        	/************AES加密文件数据*******************/
 			os = new ObjectOutputStream(sccc.getS().getOutputStream());
 			os.writeObject(mess);
 			InetAddress ip = sccc.getS().getInetAddress();
@@ -138,7 +147,7 @@ public class SendFileThread implements Runnable{
 
 			byte[] bys = new byte[1024];
 			int len = 0;
-			while ((len = bis.read(bys)) != -1) {
+			while ((len = cipherInputStream.read(bys)) != -1) {
 				bos.write(bys, 0, len);
 				bos.flush();
 			}
@@ -164,6 +173,9 @@ public class SendFileThread implements Runnable{
 				if(bos!=null){
 					bos.close();
 				}
+				if(cipherInputStream!=null){
+					cipherInputStream.close();
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -183,7 +195,7 @@ public class SendFileThread implements Runnable{
 	/**
 	 * 发送文件给所有人
 	 */
-	public void SendFileToAll(String FileName){
+	public void SendFileToAll(String FileName,String key){
 		//获得在线用户
 		String string = ServerThreadCollection.GetOnline();
 		String[] strings = string.split(" ");
@@ -193,9 +205,17 @@ public class SendFileThread implements Runnable{
 			if(!mess.getSender().equals(Name)){
 				//设置接收用户
 				mess.setGetter(Name);
+				/******************RSA加密AES的KEY********************************/
+				byte[] encryptByPublicKey = EncryptionUtils.encryptByPublicKey(Name+"_publicKey.key", key);
+				mess.setKey(encryptByPublicKey);
+				/*********************RSA加密AES的KEY*****************************/
 				Socket s1 = null;;
 				try {
-					 bis = new BufferedInputStream(new FileInputStream(FileName));
+					// bis = new BufferedInputStream(new FileInputStream(FileName));
+					/************AES加密文件数据*******************/
+					Cipher cipher = AESUtils.initAESCipher(key,Cipher.ENCRYPT_MODE);   
+		            cipherInputStream = new CipherInputStream(new FileInputStream(FileName), cipher);  
+		        	/************AES加密文件数据*******************/
 					//获得其他服务器端与客户端通信的线程
 					ServerConClient sccc = ServerThreadCollection.getServerContinueConnetClient(Name);
 					os = new ObjectOutputStream(sccc.getS().getOutputStream());
@@ -206,7 +226,7 @@ public class SendFileThread implements Runnable{
 					String str;
 					byte[] bys = new byte[1024];
 					int len = 0;
-					while ((len = bis.read(bys)) != -1) {
+					while ((len = cipherInputStream.read(bys)) != -1) {
 						bos.write(bys, 0, len);
 						bos.flush();
 					}
@@ -229,6 +249,9 @@ public class SendFileThread implements Runnable{
 						}
 						if(bos!=null){
 							bos.close();
+						}
+						if(cipherInputStream!=null){
+							cipherInputStream.close();
 						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block

@@ -46,7 +46,7 @@ public class Client_Frame extends JFrame {
 	private String Name;
 	private JFileChooser jfc;	//文件选择器
 	public Client_Frame(final String Name,final ClienManage cm){
-		super("欢迎"+Name+"进入聊天室");
+		super("欢迎"+Name+"进入加密聊天室");
 		this.Name = Name;
 		this.cm = cm;
 		this.jf = this;

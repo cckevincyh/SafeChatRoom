@@ -47,6 +47,7 @@ public class ClienManage {
 	
 	private BufferedOutputStream bos;
 	private BufferedInputStream bis;
+	private CipherInputStream cipherInputStream;
 	public ClienManage(){
 		try {
 			 s = new Socket("127.0.0.1", 9999);
@@ -212,6 +213,9 @@ public class ClienManage {
 				if(ois!=null){
 					ois.close();
 				}
+				if(cipherInputStream!=null){
+					cipherInputStream.close();
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -242,7 +246,7 @@ public class ClienManage {
 		//	bis = new BufferedInputStream(new FileInputStream(path));
 			/************AES加密文件数据*******************/
 			Cipher cipher = AESUtils.initAESCipher(key,Cipher.ENCRYPT_MODE);   
-            CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(path), cipher);  
+             cipherInputStream = new CipherInputStream(new FileInputStream(path), cipher);  
         	/************AES加密文件数据*******************/
             byte[] bys = new byte[1024];
 			int len = 0;
@@ -284,17 +288,23 @@ public class ClienManage {
 	 * 接受文件的方法
 	 */
 	public void ReciveFile(Message mess){
-		BufferedReader br = null;
-		BufferedWriter bw = null;
 		Socket s1 = null;
 		try {
 			ss = new ServerSocket(7777);
 			s1 = ss.accept();
-			bis = new BufferedInputStream(s1.getInputStream());
+			/***************RAS解密服务器端发送过来的key*******************/
+			DecryptionUtils.decryptFileKey(mess);
+			/***************RAS解密服务器端发送过来的key*******************/
+			//bis = new BufferedInputStream(s1.getInputStream());
+			/**********************进行AES解密*****************************/
+			Cipher cipher = AESUtils.initAESCipher(new String(mess.getKey()),Cipher.DECRYPT_MODE);  
+            //以加密流写入文件  
+             cipherInputStream = new CipherInputStream(s1.getInputStream(), cipher);  
+            /**********************进行AES解密*****************************/
 			bos = new BufferedOutputStream(new FileOutputStream(mess.getContent()));
 			byte[] bys = new byte[1024];
 			int len = 0;
-			while ((len = bis.read(bys)) != -1) {
+			while ((len = cipherInputStream.read(bys)) != -1) {
 				bos.write(bys, 0, len);
 				bos.flush();
 			}
@@ -312,6 +322,9 @@ public class ClienManage {
 					s1.close();
 				}if(bos!=null){
 					bos.close();
+				}
+				if(cipherInputStream!=null){
+					cipherInputStream.close();
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

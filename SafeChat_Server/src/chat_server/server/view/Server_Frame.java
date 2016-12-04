@@ -33,7 +33,7 @@ public class Server_Frame extends JFrame{
     private JFrame jf;
     private static String[] onLine={""};//在线用户的数组
 	public Server_Frame(){
-		super("聊天室服务器");
+		super("加密聊天室服务器");
 		this.jf = this;
 		Container c = this.getContentPane();
 		//设置窗体大小

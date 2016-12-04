@@ -1,4 +1,4 @@
-package chat_server.server.backstage;
+﻿package chat_server.server.backstage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class ServerConClient implements Runnable{
 				Message message = new Message(mess);	//需要解密解密的消息
 				/*********************对消息进行解密处理**********************/
 				if(mess.getMessageType().equals(MessageType.Common_Message_ToAll)||mess.getMessageType().equals(MessageType.Common_Message_ToPerson)){
-				//	DecryptionUtils.decryptMessage("privateKey.key", message);
+					DecryptionUtils.decryptMessage("privateKey.key", message);
 				}
 				/*********************对消息进行解密处理**********************/
 				//服务器显示消息

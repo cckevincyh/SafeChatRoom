@@ -28,6 +28,19 @@ public class DecryptionUtils {
 	}
 	
 	
+	/**
+	 * 客户端解密服务器发送文件消息的KEY
+	 * @param message 对message设置加密后的KEY
+	 * @return 返回KEY
+	 */
+	public static void decryptFileKey(Message message){
+		//对Key,用私钥解密
+		byte[] encryptByPublicKey = decryptByPrivateKey(message.getGetter()+"_privateKey.key", message.getKey());
+		//设置消息中的key
+		message.setKey(encryptByPublicKey);
+	}
+	
+	
 	
 	/**
 	 * 客户端解密接受到的消息
